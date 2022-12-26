@@ -1,7 +1,7 @@
-import { useSession, getSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useSession} from "next-auth/react";
 
-const chats = () => {
+
+const ChatsPage = () => {
   const session = useSession();
 
   if (session.status === "loading") {
@@ -11,7 +11,7 @@ const chats = () => {
   return (<><img src={session.data.user.image}/><div>Welcome {session.data.user.name}</div></>);
 };
 
-export default chats;
+export default ChatsPage;
 
 // export const getServerSideProps = async (context) => {
 
