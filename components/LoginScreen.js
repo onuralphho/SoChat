@@ -1,24 +1,41 @@
 import { MdAlternateEmail } from "react-icons/md";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
-
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [emailInput, setEmailInput] = useState();
-  const [passwordInput, setPasswordInput] = useState();
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
   const [passwordConfirmInput, setPasswordConfirmInput] = useState();
+  const router = useRouter();
+ 
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const status = await signIn("credentials", {
+      redirect: false,
+      email: emailInput,
+      password: passwordInput,
+      callbackUrl: "/chats",
+    });
+  
+    
+    router.replace(status.url)
+  };
 
   const submitFormHandler = async (e) => {
     e.preventDefault();
-    const nameSplited = emailInput.split("@")
+    const nameSplited = emailInput.split("@");
 
     const res = await fetch("/api/register", {
       method: "POST",
       body: JSON.stringify({
         email: emailInput,
         password: passwordInput,
-        name:nameSplited[0],
-        image:"https://res.cloudinary.com/djmonktf8/image/upload/v1669838527/budget-images/axzepr78sktwx0cy3htp.jpg"
+        name: nameSplited[0],
+        image:
+          "https://res.cloudinary.com/djmonktf8/image/upload/v1669838527/budget-images/axzepr78sktwx0cy3htp.jpg",
       }),
       headers: { "Content-Type": "application/json" },
     });
@@ -35,7 +52,7 @@ const LoginScreen = () => {
       </div>
       <div className="z-10 flex flex-col items-center gap-2 p-3 pb-10 max-w-[600px] w-full sm:w-10/12 md:w-8/12 lg:w-6/12 xl:w-4/12 2xl:w-3/12 shadow-xl bg-white rounded-lg">
         <span className="text-xl text-stone-700 ">
-          Welcome to SoChat App
+          Welcome to Soprah
           <span className="hand-wave text-2xl">👋</span>
         </span>
 
@@ -109,6 +126,9 @@ const LoginScreen = () => {
           </label>
           <button className="form-button">Join</button>
         </form>
+        <button onClick={handleLogin} className="form-button">
+          Login
+        </button>
       </div>
     </div>
   );
