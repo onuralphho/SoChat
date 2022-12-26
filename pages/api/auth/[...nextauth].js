@@ -8,10 +8,10 @@ export const authOptions = {
   session: {
     strategy: "jwt",
   },
-  // jwt: {
-  //   signingKey: process.env.JWT_SIGNING_PRIVATE_KEY,
-  // },
-  // secret: process.env.SECRET,
+  jwt: {
+    signingKey: process.env.JWT_SIGNING_PRIVATE_KEY,
+  },
+  secret: process.env.SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
