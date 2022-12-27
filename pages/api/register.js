@@ -3,6 +3,7 @@ import connectMongo from "../../db/conn";
 import users from "../../models/userSchema";
 
 const register = async (req, res) => {
+
   connectMongo().catch((error) => res.json({ error: "Connection Failed...!" }));
 
   if (req.method === "POST") {

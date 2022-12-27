@@ -8,8 +8,8 @@ const LoginScreen = () => {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordConfirmInput, setPasswordConfirmInput] = useState();
+  const[isSignIn, setIsSignIn] = useState(true)
   const router = useRouter();
- 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,9 +19,9 @@ const LoginScreen = () => {
       password: passwordInput,
       callbackUrl: "/chats",
     });
-  
-    
-    router.replace(status.url)
+    if (status.ok) {
+      router.replace(status.url);
+    }
   };
 
   const submitFormHandler = async (e) => {
@@ -50,13 +50,23 @@ const LoginScreen = () => {
       <div className="text-5xl p-2 text-white border-2  border-indigo-600 shadow-xl  rounded ">
         Soprah<span className="text-lg text-orange-500">Tech.</span>
       </div>
-      <div className="z-10 flex flex-col items-center gap-2 p-3 pb-10 max-w-[600px] w-full sm:w-10/12 md:w-8/12 lg:w-6/12 xl:w-4/12 2xl:w-3/12 shadow-xl bg-white rounded-lg">
+      <div className="z-10 flex flex-col items-center gap-2 p-3 py-10 max-w-[600px] w-full sm:w-10/12 md:w-8/12 lg:w-6/12 xl:w-4/12 2xl:w-3/12 shadow-xl bg-white rounded-lg">
         <span className="text-xl text-stone-700 ">
           Welcome to Soprah
           <span className="hand-wave text-2xl">👋</span>
         </span>
 
         <span className="text-4xl  text-stone-700 mt-3">Join Us!</span>
+
+        <div onClick={() => {
+          setIsSignIn(!isSignIn)
+        }} className="flex relative  gap-2 border-2 border-indigo-600 rounded-md p-1 cursor-pointer">
+          <div className={`absolute h-12 w-[79px] bg-indigo-600 left-1 transition-all ${isSignIn && 'translate-x-[92px] w-[69.99px]'} rounded-md z-0 `}></div>
+          <div className={`p-3 rounded-md  z-10 select-none ${!isSignIn && 'text-white'}`}>Sign Up</div>
+          <div className={`p-3 rounded-md z-10 select-none ${isSignIn && 'text-white'}`}>Sign In</div>
+        </div>
+
+
         <form
           onSubmit={submitFormHandler}
           className="flex flex-col gap-5 w-full mt-10"
@@ -98,7 +108,7 @@ const LoginScreen = () => {
               }}
             />
           </label>
-          <label className="flex  relative items-center border-indigo-600 group ">
+          {!isSignIn&&<label className="flex  relative items-center border-indigo-600 group ">
             {!showPassword ? (
               <AiOutlineEye
                 className="form-icon cursor-pointer"
@@ -123,12 +133,12 @@ const LoginScreen = () => {
                 setPasswordConfirmInput(e.target.value);
               }}
             />
-          </label>
-          <button className="form-button">Join</button>
+          </label>}
+        {!isSignIn && <button className="form-button">Join</button>}
         </form>
-        <button onClick={handleLogin} className="form-button">
+        {isSignIn &&<button onClick={handleLogin} className="form-button mt-3">
           Login
-        </button>
+        </button>}
       </div>
     </div>
   );
