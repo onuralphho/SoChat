@@ -34,7 +34,7 @@ const ChatsPage = () => {
     },
   ];
 
-  console.log(session.data.expires);
+
   return (
     <>
       <div className="flex items-center h-screen w-full ">
@@ -46,6 +46,7 @@ const ChatsPage = () => {
                 width={50}
                 height={50}
                 className="rounded-full "
+                alt="profile picture"
               />
               <span className="capitalize text-xl font-semibold text-neutral-700">
                 {session.data.user.name}
@@ -54,12 +55,13 @@ const ChatsPage = () => {
             </div>
             <div className="flex flex-col py-4 gap-3 ">
               {DUMMY_CHATS.map((chat) => (
-                <div className="flex items-center gap-5 px-3  hover:bg-indigo-300 cursor-pointer group ">
+                <div key={DUMMY_CHATS.indexOf(chat)}  className="flex items-center gap-5 px-3  hover:bg-indigo-300 cursor-pointer group ">
                   <Image
                     src={chat.image}
                     width={50}
                     height={50}
                     className="rounded-full "
+                    alt="Profile picture of chat user"
                   />
                   <div className="flex flex-col border-b w-full group-hover:border-indigo-300">
                     <span className="text-xl font-semibold text-neutral-600">{chat.name}</span>
