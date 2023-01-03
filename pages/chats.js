@@ -73,7 +73,13 @@ const ChatsPage = () => {
               ))}
             </div>
           </div>
-          <div className="right-side"></div>
+          <div className="right-side">
+            <div className="flex flex-col gap-2 h-full w-full justify-center items-center">
+              <span className="text-4xl font-semibold text-neutral-900">Talk with your friends!</span>
+              <span className="text-xl">as usual...😉</span>
+            </div>
+
+          </div>
         </div>
       </div>
     </>
