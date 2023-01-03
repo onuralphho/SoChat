@@ -10,7 +10,7 @@ body{
 }
 
 .form-input{
-  @apply border  w-full p-3 px-9 text-base rounded-xl text-stone-700 hover:border-orange-500 focus:outline-orange-500
+  @apply border w-full p-3 px-9 text-base rounded-xl  focus:outline-orange-500
 }
 
 .form-icon{
