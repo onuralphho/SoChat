@@ -55,16 +55,17 @@ const LoginScreen = () => {
 
   const submitFormHandler = async (e) => {
     e.preventDefault();
-
     if (emailValid !== false && passwordValid !== false) {
       const nameSplited = emailInput.split("@");
-
+      const lastLogin = new Date();
+      console.log(lastLogin)
       const res = await fetch("/api/register", {
         method: "POST",
         body: JSON.stringify({
           email: emailInput,
           password: passwordInput,
           name: nameSplited[0],
+          lastLogin: lastLogin,
           image:
             "https://res.cloudinary.com/djmonktf8/image/upload/v1669838527/budget-images/axzepr78sktwx0cy3htp.jpg",
         }),

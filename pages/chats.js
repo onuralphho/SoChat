@@ -1,16 +1,22 @@
 import { getSession, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { HiUserAdd } from "react-icons/hi";
+import { BiSearchAlt } from "react-icons/bi";
+import { FcPlus } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 import { MdSettings, MdArrowBackIos } from "react-icons/md";
 import React from "react";
 const ChatsPage = () => {
   const inputRef = useRef();
+  const friendSearchInputRef = useRef();
   const [settingsDropdown, setSettingsDropdown] = useState(false);
   const session = useSession();
   const [chatDetail, setChatDetail] = useState(false);
-  const [, updateState] = React.useState();
+  const [friendSearch, setFriendSearch] = useState(false);
+  const [fetchedSearch, setFethedSearch] = useState(false);
+  const [fetchedSearchData, setFethedSearchData] = useState([]);
   const forceUpdate = React.useCallback(() => updateState({}), []);
+  const [, updateState] = React.useState();
   const [DUMMY_CHATS, setDUMMY_CHATS] = useState([
     {
       id: 4234123,
@@ -66,19 +72,25 @@ const ChatsPage = () => {
   return (
     <>
       <div className="flex items-center h-screen w-full bg-neutral-800 ">
-        <div className="container flex max-md:h-screen  md:min-h-[700px] overflow-hidden rounded-xl shadow-xl shadow-black/50   mx-auto my-auto">
+        <div className="container flex max-md:h-screen h-[570px]  md:min-h-[700px] overflow-hidden rounded-xl shadow-xl shadow-black/50   mx-auto my-auto">
           <div className="left-side  flex flex-col ">
             <div className="flex items-center justify-between border-b py-2 px-3">
               <Image
                 src={session.data.user.image}
-                width={50}
-                height={50}
-                className="rounded-full "
+                width={500}
+                height={500}
+                className="w-14 h-14 rounded-full "
                 alt="profile picture"
               />
               <span className="capitalize text-xl font-semibold text-neutral-700">
                 {session.data.user.name}
               </span>
+              <HiUserAdd
+                onClick={() => {
+                  setFriendSearch(!friendSearch);
+                }}
+                className="w-7 h-7 text-neutral-700 cursor-pointer "
+              />
               <div
                 onClick={() => {
                   setSettingsDropdown(!settingsDropdown);
@@ -90,7 +102,7 @@ const ChatsPage = () => {
                   onMouseLeave={() => {
                     setSettingsDropdown(false);
                   }}
-                  className={` flex-col gap-1 place-items-center  border bg-green-400 text-white rounded-md right-0 ${
+                  className={` flex-col gap-1 place-items-center  border bg-green-400 text-white rounded-md right-0 z-50 ${
                     settingsDropdown ? "absolute" : "hidden"
                   }`}
                 >
@@ -106,7 +118,72 @@ const ChatsPage = () => {
                 </ul>
               </div>
             </div>
-            <div className="flex flex-col py-4 gap-3 ">
+            <div className="flex flex-col py-1 gap-3 ">
+              <div className={` relative  ${friendSearch ? "flex" : "hidden"}`}>
+                <input
+                  ref={friendSearchInputRef}
+                  onChange={async (e) => {
+                    if (friendSearchInputRef.current.value.length >= 2) {
+                      setFethedSearch(true);
+                      const res = await fetch("/api/get-user", {
+                        method: "POST",
+                        body: JSON.stringify({
+                          searchInput: friendSearchInputRef.current.value,
+                        }),
+                        headers: { "Content-Type": "application/json" },
+                      });
+
+                      const data = await res.json();
+                      setFethedSearchData(data.user);
+                    } else {
+                      setFethedSearch(false);
+                    }
+                  }}
+                  type="text"
+                  placeholder="Search a friend"
+                  className="px-7 rounded-md h-10 bg-transparent border border-orange-500 outline-orange-500 grow mx-2"
+                />
+                <BiSearchAlt className="absolute h-6 w-6 left-3 top-2"></BiSearchAlt>
+                <div
+                  className={`${
+                    fetchedSearch ? "flex flex-col gap-2" : "hidden"
+                  } w-full  absolute h-fit bg-white rounded-md shadow-lg top-10 `}
+                >
+                  <span
+                    onClick={() => {
+                      setFriendSearch(false);
+                    }}
+                    className="absolute right-2 top-1 font-bold text-xl text-rose-600 cursor-pointer"
+                  >
+                    x
+                  </span>
+                  {fetchedSearchData && fetchedSearchData.length === 0 ? (
+                    <div className="p-2 border-b text-lg font-semibold">
+                      No user found..
+                    </div>
+                  ) : (
+                    fetchedSearchData.map((user) => (
+                      <div
+                        className="flex items-center p-2 border-b"
+                        key={fetchedSearchData.indexOf(user)}
+                      >
+                        <Image
+                          src={user.image}
+                          width={500}
+                          height={500}
+                          className="w-10 h-10 rounded-full "
+                          alt="Profile picture of chat user"
+                        />
+                        <span className="p-2  text-lg font-semibold capitalize">
+                          {user.name}
+                        </span>
+                        <FcPlus className="w-5 h-5"></FcPlus>
+                      </div>
+                    ))
+                  )}
+                  {}
+                </div>
+              </div>
               {DUMMY_CHATS.map((chat) => (
                 <div
                   key={DUMMY_CHATS.indexOf(chat)}
@@ -117,9 +194,9 @@ const ChatsPage = () => {
                 >
                   <Image
                     src={chat.image}
-                    width={50}
-                    height={50}
-                    className="rounded-full "
+                    width={500}
+                    height={500}
+                    className="w-10 h-10 rounded-full "
                     alt="Profile picture of chat user"
                   />
                   <div className="flex flex-col border-b w-full group-hover:border-indigo-300">
@@ -136,14 +213,14 @@ const ChatsPage = () => {
             </div>
           </div>
           <div
-            className={`w-full bg-indigo-500 relative py-5  max-md:absolute max-md:w-full max-md:h-full hidden  ${
+            className={`w-full bg-indigo-500 relative  max-md:absolute max-md:w-full max-md:h-full hidden  ${
               chatDetail ? "max-md:flex" : "md:flex"
             } md:flex`}
           >
             {chatDetail ? (
               <>
-                <div className="flex flex-col w-full">
-                  <div className="flex items-center gap-5 px-5">
+                <div className="flex flex-col w-full  ">
+                  <div className="flex items-center gap-5 px-5 shadow-lg py-2 ">
                     <MdArrowBackIos
                       onClick={() => {
                         setChatDetail(false);
@@ -157,15 +234,15 @@ const ChatsPage = () => {
                       className="rounded-full "
                       alt="profile picture"
                     />
-                    <span className="capitalize text-lg text-neutral-800">
+                    <span className="capitalize text-lg font-semibold text-neutral-800">
                       {DUMMY_CHATS[0].name}
                     </span>
                   </div>
-                  <div className="flex flex-col  h-[570px] overflow-y-scroll gap-2 justify-end mb-10 px-5 pt-5  ">
+                  <div className="flex flex-col  max-md:h-[540px] h-[570px] overflow-y-scroll gap-2  mb-10 px-5 pt-5  ">
                     {DUMMY_CHATS[0].messages.map((message) => (
                       <div
-                        key={Math.random()}
-                        className={`flex   ${
+                        key={DUMMY_CHATS[0].messages.indexOf(message)}
+                        className={`flex  ${
                           message.author === session.data.user.name
                             ? "justify-end"
                             : "justify-start"
