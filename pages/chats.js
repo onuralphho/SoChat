@@ -6,68 +6,23 @@ import { FcPlus } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 import { MdSettings, MdArrowBackIos } from "react-icons/md";
 import React from "react";
-const ChatsPage = () => {
+const ChatsPage = ({ chatBoxes }) => {
   const inputRef = useRef();
   const friendSearchInputRef = useRef();
   const [settingsDropdown, setSettingsDropdown] = useState(false);
   const session = useSession();
+  const [friendsList, setFriendsList] = useState([]);
   const [chatDetail, setChatDetail] = useState(false);
   const [friendSearch, setFriendSearch] = useState(false);
   const [fetchedSearch, setFethedSearch] = useState(false);
   const [fetchedSearchData, setFethedSearchData] = useState([]);
+  const [createChatBoxLoading, setCreateChatBoxLoading] = useState(false);
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const [, updateState] = React.useState();
-  const [DUMMY_CHATS, setDUMMY_CHATS] = useState([
-    {
-      id: 4234123,
-      name: "john doe",
-      image:
-        "https://res.cloudinary.com/djmonktf8/image/upload/v1669838527/budget-images/axzepr78sktwx0cy3htp.jpg",
-
-      messages: [
-        { body: "test1", author: "onuralphho" },
-        { body: "test2", author: "john doe" },
-        { body: "test3", author: "onuralphho" },
-      ],
-      lastMessage: { body: "test3", author: "onuralphho" },
-    },
-    {
-      name: "Max Martin",
-      image:
-        "https://res.cloudinary.com/djmonktf8/image/upload/v1669838527/budget-images/axzepr78sktwx0cy3htp.jpg",
-      lastMessage: {},
-    },
-    {
-      name: "Garreld Nick Jr",
-      image:
-        "https://res.cloudinary.com/djmonktf8/image/upload/v1669838527/budget-images/axzepr78sktwx0cy3htp.jpg",
-      lastMessage: {},
-    },
-    {
-      name: "Johnathen",
-      image:
-        "https://res.cloudinary.com/djmonktf8/image/upload/v1669838527/budget-images/axzepr78sktwx0cy3htp.jpg",
-      lastMessage: {},
-    },
-  ]);
 
   const sendHandler = () => {
-    DUMMY_CHATS[0].messages.push({
-      body: inputRef.current.value,
-      author: session.data.user.name,
-    });
-    DUMMY_CHATS[0].lastMessage = {
-      body: inputRef.current.value,
-      author: session.data.user.name,
-    };
-    let test = DUMMY_CHATS;
-    setDUMMY_CHATS(test);
     forceUpdate();
   };
-
-  if (session.status === "loading") {
-    return null;
-  }
 
   return (
     <>
@@ -128,7 +83,8 @@ const ChatsPage = () => {
                       const res = await fetch("/api/get-user", {
                         method: "POST",
                         body: JSON.stringify({
-                          searchInput: friendSearchInputRef.current.value,
+                          searchInput:
+                            friendSearchInputRef.current.value.toLowerCase(),
                         }),
                         headers: { "Content-Type": "application/json" },
                       });
@@ -177,23 +133,41 @@ const ChatsPage = () => {
                         <span className="p-2  text-lg font-semibold capitalize">
                           {user.name}
                         </span>
-                        <FcPlus className="w-5 h-5"></FcPlus>
+                        <FcPlus
+                          onClick={async () => {
+                            setCreateChatBoxLoading(true);
+                            const res = await fetch("/api/create-chatbox", {
+                              method: "POST",
+                              body: JSON.stringify({
+                                owner: session.data.user,
+                                talkingTo: user,
+                                messages: [],
+                                lastMessage: "",
+                              }),
+                              headers: { "Content-Type": "application/json" },
+                            });
+                            setCreateChatBoxLoading(false);
+                            forceUpdate();
+                          }}
+                          className={`w-5 h-5 cursor-pointer ${
+                            createChatBoxLoading ? "animate-spin" : ""
+                          } `}
+                        ></FcPlus>
                       </div>
                     ))
                   )}
-                  {}
                 </div>
               </div>
-              {DUMMY_CHATS.map((chat) => (
+              {chatBoxes.map((chat) => (
                 <div
-                  key={DUMMY_CHATS.indexOf(chat)}
+                  key={chatBoxes.indexOf(chat)}
                   onClick={() => {
                     setChatDetail(true);
                   }}
                   className="flex items-center gap-5 px-3 p-1  hover:bg-indigo-300 cursor-pointer group "
                 >
                   <Image
-                    src={chat.image}
+                    src={chat.talkingTo.image}
                     width={500}
                     height={500}
                     className="w-10 h-10 rounded-full "
@@ -201,7 +175,7 @@ const ChatsPage = () => {
                   />
                   <div className="flex flex-col border-b w-full group-hover:border-indigo-300">
                     <span className="text-xl font-semibold text-neutral-600">
-                      {chat.name}
+                      {chat.talkingTo.name}
                     </span>
                     <span className="text-lg text-neutral-600 overflow-hidden">
                       {chat.lastMessage.body &&
@@ -227,40 +201,9 @@ const ChatsPage = () => {
                       }}
                       className="w-7 h-7 cursor-pointer"
                     />
-                    <Image
-                      src={DUMMY_CHATS[0].image}
-                      width={50}
-                      height={50}
-                      className="rounded-full "
-                      alt="profile picture"
-                    />
-                    <span className="capitalize text-lg font-semibold text-neutral-800">
-                      {DUMMY_CHATS[0].name}
-                    </span>
+                    
                   </div>
-                  <div className="flex flex-col  max-md:h-[540px] h-[570px] overflow-y-scroll gap-2  mb-10 px-5 pt-5  ">
-                    {DUMMY_CHATS[0].messages.map((message) => (
-                      <div
-                        key={DUMMY_CHATS[0].messages.indexOf(message)}
-                        className={`flex  ${
-                          message.author === session.data.user.name
-                            ? "justify-end"
-                            : "justify-start"
-                        }`}
-                      >
-                        <span className="bg-white min-w-[50px] px-4 py-2 text-lg relative flex justify-center rounded-full">
-                          <span className="z-10">{message.body}</span>
-                          <div
-                            className={`absolute bg-white h-5 w-5  bottom-0 z-0 ${
-                              message.author === session.data.user.name
-                                ? "right-0"
-                                : "left-0"
-                            } `}
-                          ></div>
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+
                 </div>
                 <div className="absolute flex w-full bg-white h-12 bottom-0">
                   <input
@@ -305,8 +248,20 @@ export async function getServerSideProps(context) {
       },
     };
   }
+  const res = await fetch(process.env.NEXTAUTH_URL + "/api/get-chatboxes", {
+    method: "POST",
+    body: JSON.stringify({
+      email: session.user.email,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+  const data = await res.json();
+  console.log(session.user.email, data);
 
   return {
-    props: {},
+    props: {
+      session,
+      chatBoxes: data.data,
+    },
   };
 }

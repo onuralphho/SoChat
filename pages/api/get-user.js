@@ -11,8 +11,11 @@ const getUser = async (req, res) => {
     //   return res.status(201).json({ status: true, user: data });
     // });
     users.find({ name: { $regex: searchInput } }, function (err, data) {
-      if (err) return res.status(404).json({ err });
-      return res.status(201).json({ status: true, user: data });
+      if (err) {
+        return res.status(404).json({ err });
+      } else {
+        return res.status(201).json({ status: true, user: data });
+      }
     });
   } else {
     res
