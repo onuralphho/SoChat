@@ -9,11 +9,11 @@ export default function Home() {
 
  
   useEffect(() => {
-    console.log(session)
+    
     if(session.data){
       router.replace('/chats')
     }
-  },[session])
+  },[session,router])
 
 
   return (
