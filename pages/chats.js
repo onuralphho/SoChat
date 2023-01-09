@@ -201,9 +201,7 @@ const ChatsPage = ({ chatBoxes }) => {
                       }}
                       className="w-7 h-7 cursor-pointer"
                     />
-                    
                   </div>
-
                 </div>
                 <div className="absolute flex w-full bg-white h-12 bottom-0">
                   <input
@@ -248,7 +246,7 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  const res = await fetch(process.env.NEXTAUTH_URL + "/api/get-chatboxes", {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/get-chatboxes`, {
     method: "POST",
     body: JSON.stringify({
       email: session.user.email,
