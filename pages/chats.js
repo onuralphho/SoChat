@@ -6,7 +6,7 @@ import { FcPlus } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 import { MdSettings, MdArrowBackIos } from "react-icons/md";
 import React from "react";
-const ChatsPage = () => {
+const ChatsPage = ({chatBoxes}) => {
   const inputRef = useRef();
   const friendSearchInputRef = useRef();
   const [settingsDropdown, setSettingsDropdown] = useState(false);
