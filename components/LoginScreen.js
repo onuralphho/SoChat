@@ -66,7 +66,6 @@ const LoginScreen = () => {
           password: passwordInput,
           name: nameSplited[0],
           lastLogin: lastLogin,
-          friendList:[],
           image:
             "https://res.cloudinary.com/djmonktf8/image/upload/v1669838527/budget-images/axzepr78sktwx0cy3htp.jpg",
         }),

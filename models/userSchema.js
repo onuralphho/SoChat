@@ -5,7 +5,6 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   name: { type: String, index: true, required: true },
   image: { type: String, required: true },
-  friendsList: { type: Array, default:[] },
   lastLogin: { type: Date },
 });
 

@@ -6,7 +6,7 @@ import { FcPlus } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 import { MdSettings, MdArrowBackIos } from "react-icons/md";
 import React from "react";
-const ChatsPage = ({ chatBoxes }) => {
+const ChatsPage = () => {
   const inputRef = useRef();
   const friendSearchInputRef = useRef();
   const [settingsDropdown, setSettingsDropdown] = useState(false);
@@ -158,7 +158,7 @@ const ChatsPage = ({ chatBoxes }) => {
                   )}
                 </div>
               </div>
-              {chatBoxes.map((chat) => (
+              {/* {chatBoxes.map((chat) => (
                 <div
                   key={chatBoxes.indexOf(chat)}
                   onClick={() => {
@@ -183,7 +183,7 @@ const ChatsPage = ({ chatBoxes }) => {
                     </span>
                   </div>
                 </div>
-              ))}
+              ))} */}
             </div>
           </div>
           <div
@@ -246,19 +246,19 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/get-chatboxes`, {
-    method: "POST",
-    body: JSON.stringify({
-      email: session.user.email,
-    }),
-    headers: { "Content-Type": "application/json" },
-  });
-  const data = await res.json();
+  // const res = await fetch(`${process.env.NEXTAUTH_URL}/api/get-chatboxes`, {
+  //   method: "POST",
+  //   body: JSON.stringify({
+  //     email: session.user.email,
+  //   }),
+  //   headers: { "Content-Type": "application/json" },
+  // });
+  // const data = await res.json();
 
   return {
     props: {
       session,
-      chatBoxes: data.data,
+      // chatBoxes: data.data,
     },
   };
 }
