@@ -158,7 +158,7 @@ const ChatsPage = ({chatBoxes}) => {
                   )}
                 </div>
               </div>
-              {/* {chatBoxes.map((chat) => (
+              {chatBoxes.map((chat) => (
                 <div
                   key={chatBoxes.indexOf(chat)}
                   onClick={() => {
@@ -183,7 +183,7 @@ const ChatsPage = ({chatBoxes}) => {
                     </span>
                   </div>
                 </div>
-              ))} */}
+              ))}
             </div>
           </div>
           <div
