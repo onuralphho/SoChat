@@ -158,7 +158,7 @@ const ChatsPage = ({chatBoxes}) => {
                   )}
                 </div>
               </div>
-              {/* {chatBoxes.map((chat) => (
+              {chatBoxes.map((chat) => (
                 <div
                   key={chatBoxes.indexOf(chat)}
                   onClick={() => {
@@ -175,7 +175,7 @@ const ChatsPage = ({chatBoxes}) => {
                   />
                   <div className="flex flex-col border-b w-full group-hover:border-indigo-300">
                     <span className="text-xl font-semibold text-neutral-600">
-                      {chat.talkingTo.name}
+                      {chat.talkingTo.name === session.data.user.name ? chat.owner.name:chat.talkingTo.name}
                     </span>
                     <span className="text-lg text-neutral-600 overflow-hidden">
                       {chat.lastMessage.body &&
@@ -183,7 +183,7 @@ const ChatsPage = ({chatBoxes}) => {
                     </span>
                   </div>
                 </div>
-              ))} */}
+              ))}
             </div>
           </div>
           <div
@@ -246,7 +246,7 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/get-chatboxes`, {
+  const res = await fetch(`https://sochat-one.vercel.app/api/get-chatboxes`, {
     method: "POST",
     body: JSON.stringify({
       email: session.user.email,
