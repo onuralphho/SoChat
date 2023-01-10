@@ -3,15 +3,13 @@ import Image from "next/image";
 import { HiUserAdd } from "react-icons/hi";
 import { BiSearchAlt } from "react-icons/bi";
 import { FcPlus } from "react-icons/fc";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { MdSettings, MdArrowBackIos } from "react-icons/md";
-
-import ChatLog from "../components/chatLog";
+import ChatLog from "../components/ChatLog";
 const ChatsPage = ({ chatBoxes }) => {
   const friendSearchInputRef = useRef();
   const [settingsDropdown, setSettingsDropdown] = useState(false);
   const session = useSession();
-  const [friendsList, setFriendsList] = useState([]);
   const [chatDetail, setChatDetail] = useState(false);
   const [friendSearch, setFriendSearch] = useState(false);
   const [fetchedSearch, setFethedSearch] = useState(false);
@@ -193,7 +191,6 @@ const ChatsPage = ({ chatBoxes }) => {
           >
             {chatDetail ? (
               <>
-                
                 <div className="flex flex-col w-full  ">
                   <div className="flex items-center gap-5 px-5 h-20 shadow-lg py-2 ">
                     <MdArrowBackIos
@@ -215,13 +212,12 @@ const ChatsPage = ({ chatBoxes }) => {
                     />
                     <span className="capitalize text-lg font-semibold text-neutral-800">
                       {chatDetail.talkingTo.email === session.data.user.email
-                          ? chatDetail.owner.name
-                          : chatDetail.talkingTo.name}
+                        ? chatDetail.owner.name
+                        : chatDetail.talkingTo.name}
                     </span>
                   </div>
                   <ChatLog chatDetail={chatDetail} session={session}></ChatLog>
                 </div>
-                
               </>
             ) : (
               <div className="flex flex-col gap-2 h-full w-full justify-center items-center">
