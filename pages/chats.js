@@ -5,9 +5,9 @@ import { BiSearchAlt } from "react-icons/bi";
 import { FcPlus } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 import { MdSettings, MdArrowBackIos } from "react-icons/md";
-import React from "react";
-const ChatsPage = ({chatBoxes}) => {
-  const inputRef = useRef();
+
+import ChatLog from "../components/chatLog";
+const ChatsPage = ({ chatBoxes }) => {
   const friendSearchInputRef = useRef();
   const [settingsDropdown, setSettingsDropdown] = useState(false);
   const session = useSession();
@@ -17,12 +17,6 @@ const ChatsPage = ({chatBoxes}) => {
   const [fetchedSearch, setFethedSearch] = useState(false);
   const [fetchedSearchData, setFethedSearchData] = useState([]);
   const [createChatBoxLoading, setCreateChatBoxLoading] = useState(false);
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-  const [, updateState] = React.useState();
-
-  const sendHandler = () => {
-    forceUpdate();
-  };
 
   return (
     <>
@@ -162,12 +156,16 @@ const ChatsPage = ({chatBoxes}) => {
                 <div
                   key={chatBoxes.indexOf(chat)}
                   onClick={() => {
-                    setChatDetail(true);
+                    setChatDetail(chat);
                   }}
                   className="flex items-center gap-5 px-3 p-1  hover:bg-indigo-300 cursor-pointer group "
                 >
                   <Image
-                    src={chat.talkingTo.image}
+                    src={
+                      chat.talkingTo.email === session.data.user.email
+                        ? chat.owner.image
+                        : chat.talkingTo.image
+                    }
                     width={500}
                     height={500}
                     className="w-10 h-10 rounded-full "
@@ -175,7 +173,9 @@ const ChatsPage = ({chatBoxes}) => {
                   />
                   <div className="flex flex-col border-b w-full group-hover:border-indigo-300">
                     <span className="text-xl font-semibold text-neutral-600">
-                      {chat.talkingTo.name === session.data.user.name ? chat.owner.name:chat.talkingTo.name}
+                      {chat.talkingTo.name === session.data.user.name
+                        ? chat.owner.name
+                        : chat.talkingTo.name}
                     </span>
                     <span className="text-lg text-neutral-600 overflow-hidden">
                       {chat.lastMessage.body &&
@@ -193,30 +193,35 @@ const ChatsPage = ({chatBoxes}) => {
           >
             {chatDetail ? (
               <>
+                
                 <div className="flex flex-col w-full  ">
-                  <div className="flex items-center gap-5 px-5 shadow-lg py-2 ">
+                  <div className="flex items-center gap-5 px-5 h-20 shadow-lg py-2 ">
                     <MdArrowBackIos
                       onClick={() => {
-                        setChatDetail(false);
+                        setChatDetail(null);
                       }}
                       className="w-7 h-7 cursor-pointer"
                     />
+                    <Image
+                      src={
+                        chatDetail.talkingTo.email === session.data.user.email
+                          ? chatDetail.owner.image
+                          : chatDetail.talkingTo.image
+                      }
+                      width={500}
+                      height={500}
+                      className="rounded-full h-12 w-12"
+                      alt="profile picture"
+                    />
+                    <span className="capitalize text-lg font-semibold text-neutral-800">
+                      {chatDetail.talkingTo.email === session.data.user.email
+                          ? chatDetail.owner.name
+                          : chatDetail.talkingTo.name}
+                    </span>
                   </div>
+                  <ChatLog chatDetail={chatDetail} session={session}></ChatLog>
                 </div>
-                <div className="absolute flex w-full bg-white h-12 bottom-0">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    className="border w-full h-full outline-indigo-400 text-neutral-800 font-semibold px-2"
-                    placeholder="Type something..."
-                  />
-                  <button
-                    onClick={sendHandler}
-                    className="bg-green-500 px-5 font-semibold "
-                  >
-                    Send
-                  </button>
-                </div>
+                
               </>
             ) : (
               <div className="flex flex-col gap-2 h-full w-full justify-center items-center">

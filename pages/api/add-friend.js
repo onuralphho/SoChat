@@ -5,7 +5,7 @@ const addFriend = async (req, res) => {
   connectMongo().catch((error) => res.json({ error: "Connection failed!" }));
 
   if (req.method === "POST") {
-    console.log(req.body.id);
+    
     users.updateOne(
       { email: req.body.email },
       {
