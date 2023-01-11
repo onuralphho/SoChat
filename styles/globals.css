@@ -3,6 +3,7 @@
 @tailwind utilities;
 body{
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  @apply bg-neutral-800 
 }
 
 .form-button{
@@ -18,7 +19,7 @@ body{
 }
 
 .left-side{
-  @apply w-full md:w-4/12 bg-indigo-50 
+  @apply w-full md:w-6/12 lg:w-4/12  bg-indigo-50 
 }
 
 .background {

@@ -4,7 +4,7 @@ const ChatLog = (props) => {
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const [, updateState] = React.useState();
   const sendMessageRef = useRef();
-  console.log(props)
+  
   const sendHandler = () => {
    
     forceUpdate();
@@ -37,7 +37,7 @@ const ChatLog = (props) => {
           </div>
         ))}
       </div>
-      <div className="absolute flex w-full bg-white h-12 bottom-0">
+      <div className=" flex absolute w-full bg-white h-12 bottom-0">
         <input
           ref={sendMessageRef}
           type="text"
