@@ -23,20 +23,22 @@ const ChatsPage = ({ chatBoxes }) => {
   const router = useRouter();
   const refreshData = () => router.replace(router.asPath);
 
+
   useEffect(() => {
-    setWindowInnerHeight(window.innerHeight)
-    
-  },[])
-
-
+    setWindowInnerHeight(window.innerHeight);
+  }, []);
 
   return (
     <>
-      <div className={`flex items-center h-screen  w-full  `} style={{maxHeight:windowInnerHeight}}>
-        <div className={`container flex max-md:h-full  h-[570px]  md:min-h-[700px] overflow-hidden rounded-xl shadow-xl shadow-black/50   mx-auto my-auto`}>
+      <div
+        className={`flex items-center h-screen  w-full  `}
+        style={{ maxHeight: windowInnerHeight }}
+      >
+        <div
+          className={`container flex max-md:h-full  h-[570px]  md:min-h-[700px] overflow-hidden rounded-xl shadow-xl shadow-black/50   mx-auto my-auto`}
+        >
           <div className="left-side h-full  flex flex-col  ">
             <div className="flex items-center justify-between border-b py-2 px-3">
-              
               <Image
                 src={session.data.user.image}
                 width={500}
@@ -97,7 +99,30 @@ const ChatsPage = ({ chatBoxes }) => {
                       });
 
                       const data = await res.json();
-                      setFethedSearchData(data.user);
+
+                      const NewData = data.user.filter(
+                        (item) => item.email !== session.data.user.email
+                      );
+                      const checkData = [];
+
+                      chatBoxes.map((chat) => {
+                        checkData.push(chat.owner.email);
+                        checkData.push(chat.talkingTo.email);
+                      });
+
+                      const FinalCheckData = checkData.filter(
+                        (item) => item !== session.data.user.email
+                      );
+
+                      const FinalData = [];
+
+                      NewData.map(
+                        (item) =>
+                          !FinalCheckData.includes(item.email) &&
+                          FinalData.push(item)
+                      );
+
+                      setFethedSearchData(FinalData);
                     } else {
                       setFethedSearch(false);
                     }
@@ -149,7 +174,7 @@ const ChatsPage = ({ chatBoxes }) => {
                                 owner: session.data.user,
                                 talkingTo: user,
                                 messages: [],
-                                lastMessage: "",
+                                lastMessage: {},
                               }),
                               headers: { "Content-Type": "application/json" },
                             });
@@ -194,7 +219,7 @@ const ChatsPage = ({ chatBoxes }) => {
                           : chat.talkingTo.name}
                       </span>
                       <span className="text-lg text-neutral-600 overflow-hidden">
-                        {chat.lastMessage.body &&
+                        {chat.lastMessage &&
                           chat.lastMessage.author + ":" + chat.lastMessage.body}
                       </span>
                     </div>
@@ -211,31 +236,29 @@ const ChatsPage = ({ chatBoxes }) => {
             {chatDetail ? (
               <>
                 <div className="flex flex-col w-full ">
-                  
-                    <div className="flex items-center gap-5 px-5 h-20 shadow-lg py-2 bg-gradient-to-tr to-green-400 from-indigo-500">
-                      <MdArrowBackIos
-                        onClick={() => {
-                          setChatDetail(null);
-                        }}
-                        className="w-7 h-7 cursor-pointer"
-                      />
-                      <Image
-                        src={
-                          chatDetail.talkingTo.email === session.data.user.email
-                            ? chatDetail.owner.image
-                            : chatDetail.talkingTo.image
-                        }
-                        width={500}
-                        height={500}
-                        className="rounded-full h-12 w-12"
-                        alt="profile picture"
-                      />
-                      <span className="capitalize text-lg font-semibold text-neutral-800 ">
-                        {chatDetail.talkingTo.email === session.data.user.email
-                          ? chatDetail.owner.name
-                          : chatDetail.talkingTo.name}
-                      </span>
-                    
+                  <div className="flex items-center gap-5 px-5 h-20 shadow-lg py-2 bg-gradient-to-tr to-green-400 from-indigo-500">
+                    <MdArrowBackIos
+                      onClick={() => {
+                        setChatDetail(null);
+                      }}
+                      className="w-7 h-7 cursor-pointer"
+                    />
+                    <Image
+                      src={
+                        chatDetail.talkingTo.email === session.data.user.email
+                          ? chatDetail.owner.image
+                          : chatDetail.talkingTo.image
+                      }
+                      width={500}
+                      height={500}
+                      className="rounded-full h-12 w-12"
+                      alt="profile picture"
+                    />
+                    <span className="capitalize text-lg font-semibold text-neutral-800 ">
+                      {chatDetail.talkingTo.email === session.data.user.email
+                        ? chatDetail.owner.name
+                        : chatDetail.talkingTo.name}
+                    </span>
                   </div>
                   <ChatLog chatDetail={chatDetail} session={session}></ChatLog>
                 </div>
@@ -280,7 +303,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       session,
-      chatBoxes: data.data,
+      chatBoxes: data.data.reverse(),
     },
   };
 }

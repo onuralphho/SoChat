@@ -4,7 +4,7 @@ const chatBoxSchema = new Schema({
   owner: { type: Object },
   talkingTo: { type: Object },
   messages: { type: Array },
-  lastMessage: { type: String },
+  lastMessage: { type: Object },
 });
 
 const chatBoxes = models.chatBoxes || model("chatBoxes", chatBoxSchema);
