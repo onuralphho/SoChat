@@ -132,3 +132,33 @@ body{
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #22c55e;
 }
+
+.plane{
+  filter: drop-shadow(2px 2px rgba(0, 0, 0, 0.534))
+}
+.sending{
+
+  animation: fly 1s infinite ease-out;
+}
+
+@keyframes fly {
+  0%{
+    transform: translate(0px, 0px)
+  }
+  100%{
+    transform: translate(15px, -10px);
+  
+    
+  }
+}
+
+
+ .burger-open-1 {
+  transform: rotate(50deg);
+  translate: 0px 9.3px;
+}
+
+.burger-open-2 {
+  transform: rotate(-50deg);
+  translate: 0px -5px;
+}

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { HiUserAdd } from "react-icons/hi";
 import { BiSearchAlt } from "react-icons/bi";
 import { FcPlus } from "react-icons/fc";
+import { FaTelegramPlane } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { MdSettings, MdArrowBackIos } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
@@ -26,7 +27,7 @@ const ChatsPage = ({ chatBoxes }) => {
   const [checkerVal, setCheckerVal] = useState(false);
   const router = useRouter();
   const refreshData = () => router.replace(router.asPath);
-
+  const [burgerOpen, setBurgerOpen] = useState(false)
   const scrollToBottom = () => {
     if (checkerVal === false) {
       messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
@@ -105,6 +106,7 @@ const ChatsPage = ({ chatBoxes }) => {
               <span className="capitalize text-xl font-semibold text-neutral-700">
                 {session.data.user.name}
               </span>
+             
               <HiUserAdd
                 onClick={() => {
                   setFriendSearch(!friendSearch);
@@ -114,15 +116,20 @@ const ChatsPage = ({ chatBoxes }) => {
               <div
                 onClick={() => {
                   setSettingsDropdown(!settingsDropdown);
+                  setBurgerOpen(!burgerOpen)
                 }}
                 className="relative group cursor-pointer"
               >
-                <MdSettings className="w-7 h-7 text-neutral-700 " />
+                <button onClick={() => {
+                setBurgerOpen(!burgerOpen)
+              }} className=" hamburger-menu flex flex-col gap-1 ">
+                <div className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700  ${burgerOpen ?"burger-open-1 bg-red-600":""}`}></div>
+                <div className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700 ${burgerOpen ?"opacity-0":""}`}></div>
+                <div className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700 ${burgerOpen ?"burger-open-2 bg-red-600":""}`}></div>
+              </button>
                 <ul
-                  onMouseLeave={() => {
-                    setSettingsDropdown(false);
-                  }}
-                  className={` flex-col gap-1 place-items-center  border bg-green-400 text-white rounded-md right-0 z-50 ${
+                  
+                  className={`select-none flex-col gap-1 place-items-center  border bg-green-400 text-white rounded-md right-0 top-6 z-50 ${
                     settingsDropdown ? "absolute" : "hidden"
                   }`}
                 >
@@ -256,7 +263,7 @@ const ChatsPage = ({ chatBoxes }) => {
                       setChatDetail(chat);
                       setCheckerVal(false);
                     }}
-                    className="flex items-center gap-5 px-3 p-1  hover:bg-indigo-300 cursor-pointer group "
+                    className="select-none flex items-center gap-5 px-3 p-1  hover:bg-indigo-300 cursor-pointer group "
                   >
                     <Image
                       src={
@@ -324,7 +331,7 @@ const ChatsPage = ({ chatBoxes }) => {
                     session={session}
                   ></ChatLog> */}
 
-                  <div className="flex flex-col  max-md:h-[540px] h-[570px] overflow-y-scroll gap-2  pb-5 px-5 pt-5  ">
+                  <div className="flex flex-col  max-md:h-[540px] h-[570px] overflow-y-scroll gap-2  pt-2 px-5  ">
                     {chatDetail.messages.map((message) => (
                       <div
                         key={chatDetail.messages.indexOf(message)}
@@ -335,21 +342,37 @@ const ChatsPage = ({ chatBoxes }) => {
                         }`}
                       >
                         <div
-                          className={`bg-white min-w-[70px] px-2 pr-12 py-1 text-lg relative flex   rounded-full ${
+                          className={`bg-white min-w-[70px]   px-2  py-2 pb-4 text-lg relative flex rounded-xl ${
                             message.author === session.data.user.email
                               ? "rounded-br-none"
                               : "rounded-bl-none"
                           } `}
                         >
-                          <span
-                            className={`z-10 text-md  ${
-                              message.author === session.data.user.email
-                                ? "self-start"
-                                : "self-start"
-                            }`}
-                          >
-                            {message.body}
-                          </span>
+                          <div className="flex-col max-md:max-w-[170px] max-w-[370px] ">
+                            {message.image ? (
+                              <div className="w-full">
+                                <Image
+                                  alt="picture"
+                                  width={1000}
+                                  height={1000}
+                                  src={message.image}
+                                  className="rounded-lg"
+                                />
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                            <span
+                              style={{ wordWrap: "break-word" }}
+                              className={`z-10 text-md  ${
+                                message.author === session.data.user.email
+                                  ? "self-start"
+                                  : "self-start"
+                              }`}
+                            >
+                              {message.body}
+                            </span>
+                          </div>
                           <span
                             className={`text-xs text-gray-400 absolute right-2 bottom-0 ${
                               message.author === session.data.user.email
@@ -365,7 +388,7 @@ const ChatsPage = ({ chatBoxes }) => {
                               message.date
                                 .split("T")[1]
                                 .split(".")[0]
-                                .split(":")[1] }
+                                .split(":")[1]}
                           </span>
                           {/* <div
                             className={`absolute bg-white h-5 w-5  bottom-0 z-0 ${
@@ -397,11 +420,7 @@ const ChatsPage = ({ chatBoxes }) => {
                     />
                     {messageInput.length !== 0 && (
                       <button className="bg-green-500 px-5 font-semibold disabled:cursor-not-allowed disabled:bg-green-800 ">
-                        <span
-                          className={`${messageSending ? "animate-ping" : ""}`}
-                        >
-                          Send
-                        </span>
+                        <FaTelegramPlane className={`w-7 h-7 text-white plane ${messageSending?"sending":""}`}/>
                       </button>
                     )}
                   </form>
@@ -445,7 +464,7 @@ export async function getServerSideProps(context) {
   });
   const data = await res.json();
 
-  chatBoxes.watch().close()
+  chatBoxes.watch().close();
   return {
     props: {
       session,
