@@ -2,15 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/router";
 const ChatLog = (props) => {
-  const router = useRouter()
   const [messageInput, setMessageInput] = useState("");
   const [messageSending, setMessageSending] = useState(false);
-  const [, updateState] = React.useState();
-  const [reloader, setReloader] = useState(false);
+  const router = useRouter();
+  const refreshData = () => router.replace(router.asPath);
+
 
   const sendHandler = async () => {
     setMessageSending(true);
-    setReloader(true)
+   
     const Now = new Date();
     const res = await fetch("/api/send-message", {
       method: "POST",
@@ -42,7 +42,8 @@ const ChatLog = (props) => {
     const data2 = await res2.json();
     setMessageInput("");
     setMessageSending(false);
-    setReloader(false)
+    props.update();
+    refreshData()
   };
   return (
     <>
@@ -57,7 +58,6 @@ const ChatLog = (props) => {
             }`}
           >
             <span className="bg-white min-w-[50px] h-[44px] px-4 py-2 text-lg relative flex flex-col justify-center rounded-full">
-             
               <span className="z-10">{message.body}</span>
               <div
                 className={`absolute bg-white h-5 w-5  bottom-0 z-0 ${
@@ -81,7 +81,9 @@ const ChatLog = (props) => {
           placeholder="Type something..."
         />
         <button
-          onClick={sendHandler}
+          onClick={() => {
+            sendHandler();
+          }}
           disabled={messageInput.length === 0}
           className="bg-green-500 px-5 font-semibold disabled:cursor-not-allowed disabled:bg-green-800 disabled:blur-sm"
         >

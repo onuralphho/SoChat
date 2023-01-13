@@ -5,28 +5,83 @@ import { BiSearchAlt } from "react-icons/bi";
 import { FcPlus } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 import { MdSettings, MdArrowBackIos } from "react-icons/md";
-import ChatLog from "../components/ChatLog";
+import { v4 as uuidv4 } from "uuid";
 import React from "react";
 import { useRouter } from "next/router";
+import chatBoxes from "../models/chatBoxSchema";
+
 const ChatsPage = ({ chatBoxes }) => {
+  const session = useSession();
   const friendSearchInputRef = useRef();
   const [settingsDropdown, setSettingsDropdown] = useState(false);
-  const session = useSession();
   const [chatDetail, setChatDetail] = useState(false);
   const [friendSearch, setFriendSearch] = useState(false);
   const [fetchedSearch, setFethedSearch] = useState(false);
   const [fetchedSearchData, setFethedSearchData] = useState([]);
   const [createChatBoxLoading, setCreateChatBoxLoading] = useState(false);
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-  const [, updateState] = React.useState();
   const [windowInnerHeight, setWindowInnerHeight] = useState();
+  const [messageInput, setMessageInput] = useState("");
+  const [messageSending, setMessageSending] = useState(false);
+  const messagesEndRef = useRef(null);
+  const [checkerVal, setCheckerVal] = useState(false);
   const router = useRouter();
-  const refreshData = () => router.replace(router.asPath);
 
+  const scrollToBottom = () => {
+    if (checkerVal === false) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatDetail]);
+
+  const sendHandler = async (id) => {
+    if (messageInput.length === 0) {
+      return;
+    }
+    setMessageSending(true);
+    const Now = new Date();
+    const res = await fetch("/api/send-message", {
+      method: "POST",
+      body: JSON.stringify({
+        id: id,
+        message: {
+          id: uuidv4(),
+          body: messageInput,
+          author: session.data.user.email,
+          image: "",
+          date: Now,
+        },
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await res.json();
+
+    const res2 = await fetch("/api/set-lastmessage", {
+      method: "POST",
+      body: JSON.stringify({
+        id: id,
+        message: {
+          body: messageInput,
+          author: session.data.user.name,
+        },
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const data2 = await res2.json();
+
+    router.replace(router.asPath);
+    setCheckerVal(true);
+    setChatDetail(data2.newData);
+    setMessageInput("");
+    setMessageSending(false);
+  };
 
   useEffect(() => {
     setWindowInnerHeight(window.innerHeight);
-  }, []);
+  }, [chatDetail]);
 
   return (
     <>
@@ -198,6 +253,7 @@ const ChatsPage = ({ chatBoxes }) => {
                     key={chatBoxes.indexOf(chat)}
                     onClick={() => {
                       setChatDetail(chat);
+                      setCheckerVal(false);
                     }}
                     className="flex items-center gap-5 px-3 p-1  hover:bg-indigo-300 cursor-pointer group "
                   >
@@ -236,10 +292,11 @@ const ChatsPage = ({ chatBoxes }) => {
             {chatDetail ? (
               <>
                 <div className="flex flex-col w-full ">
-                  <div className="flex items-center gap-5 px-5 h-20 shadow-lg py-2 bg-gradient-to-tr to-green-400 from-indigo-500">
+                  <div className="flex items-center gap-5 px-5 h-20 shadow-lg py-2 bg-gradient-to-tr  from-indigo-500 to-green-400">
                     <MdArrowBackIos
                       onClick={() => {
                         setChatDetail(null);
+                        setCheckerVal(false);
                       }}
                       className="w-7 h-7 cursor-pointer"
                     />
@@ -260,7 +317,93 @@ const ChatsPage = ({ chatBoxes }) => {
                         : chatDetail.talkingTo.name}
                     </span>
                   </div>
-                  <ChatLog chatDetail={chatDetail} session={session}></ChatLog>
+                  {/* <ChatLog
+                    update={refreshData}
+                    chatDetail={chatDetail}
+                    session={session}
+                  ></ChatLog> */}
+
+                  <div className="flex flex-col  max-md:h-[540px] h-[570px] overflow-y-scroll gap-2  pb-5 px-5 pt-5  ">
+                    {chatDetail.messages.map((message) => (
+                      <div
+                        key={chatDetail.messages.indexOf(message)}
+                        className={`flex  ${
+                          message.author === session.data.user.email
+                            ? "justify-end"
+                            : "justify-start"
+                        }`}
+                      >
+                        <div
+                          className={`bg-white min-w-[70px] px-2 pr-12 py-1 text-lg relative flex   rounded-full ${
+                            message.author === session.data.user.email
+                              ? "rounded-br-none"
+                              : "rounded-bl-none"
+                          } `}
+                        >
+                          <span
+                            className={`z-10 text-sm  ${
+                              message.author === session.data.user.email
+                                ? "self-start"
+                                : "self-start"
+                            }`}
+                          >
+                            {message.body}
+                          </span>
+                          <span
+                            className={`text-xs text-gray-400 absolute right-2 top-3 ${
+                              message.author === session.data.user.email
+                                ? "self-end"
+                                : "self-start"
+                            }`}
+                          >
+                            {message.date
+                              .split("T")[1]
+                              .split(".")[0]
+                              .split(":")[0] +
+                              ":" +
+                              message.date
+                                .split("T")[1]
+                                .split(".")[0]
+                                .split(":")[1] }
+                          </span>
+                          {/* <div
+                            className={`absolute bg-white h-5 w-5  bottom-0 z-0 ${
+                              message.author === session.data.user.email
+                                ? "right-0"
+                                : "left-0"
+                            } `}
+                          ></div> */}
+                        </div>
+                      </div>
+                    ))}
+                    <div ref={messagesEndRef} />
+                  </div>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      sendHandler(chatDetail._id);
+                    }}
+                    className=" flex absolute w-full  h-12 bottom-0"
+                  >
+                    <input
+                      onChange={(e) => {
+                        setMessageInput(e.target.value);
+                      }}
+                      value={messageInput}
+                      type="text"
+                      className="border w-full h-full outline-indigo-400 text-neutral-800 font-semibold px-2"
+                      placeholder="Type something..."
+                    />
+                    {messageInput.length !== 0 && (
+                      <button className="bg-green-500 px-5 font-semibold disabled:cursor-not-allowed disabled:bg-green-800 ">
+                        <span
+                          className={`${messageSending ? "animate-ping" : ""}`}
+                        >
+                          Send
+                        </span>
+                      </button>
+                    )}
+                  </form>
                 </div>
               </>
             ) : (
@@ -291,6 +434,7 @@ export async function getServerSideProps(context) {
       },
     };
   }
+
   const res = await fetch(`https://sochat-one.vercel.app/api/get-chatboxes`, {
     method: "POST",
     body: JSON.stringify({
@@ -300,6 +444,7 @@ export async function getServerSideProps(context) {
   });
   const data = await res.json();
 
+  
   return {
     props: {
       session,

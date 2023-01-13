@@ -3,17 +3,18 @@ import connectMongo from "../../db/conn";
 
 const sendMessage = async (req, res) => {
   connectMongo().catch((error) => res.json({ error: "Connection Failed...!" }));
-
+ 
   if (req.method === "POST") {
     chatBoxes.findByIdAndUpdate(
       { _id: req.body.id },
       { $push: { messages: req.body.message } },
-      { $set: { lastMessage: req.body.message.body } },
       function (err, data) {
         if (err) {
           return res.status(400).json({ message: "Something went wrong!" });
         } else {
-          return res.status(200).json({ message: "Message sent successfuly!" });
+          return res
+            .status(200)
+            .json({ message: "Message sent successfuly!", newData: data });
         }
       }
     );
