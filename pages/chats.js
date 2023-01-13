@@ -342,7 +342,7 @@ const ChatsPage = ({ chatBoxes }) => {
                           } `}
                         >
                           <span
-                            className={`z-10 text-sm  ${
+                            className={`z-10 text-md  ${
                               message.author === session.data.user.email
                                 ? "self-start"
                                 : "self-start"
@@ -351,7 +351,7 @@ const ChatsPage = ({ chatBoxes }) => {
                             {message.body}
                           </span>
                           <span
-                            className={`text-xs text-gray-400 absolute right-2 top-3 ${
+                            className={`text-xs text-gray-400 absolute right-2 bottom-0 ${
                               message.author === session.data.user.email
                                 ? "self-end"
                                 : "self-start"
@@ -445,6 +445,7 @@ export async function getServerSideProps(context) {
   });
   const data = await res.json();
 
+  chatBoxes.watch().close()
   return {
     props: {
       session,
