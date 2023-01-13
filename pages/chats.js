@@ -25,6 +25,7 @@ const ChatsPage = ({ chatBoxes }) => {
   const messagesEndRef = useRef(null);
   const [checkerVal, setCheckerVal] = useState(false);
   const router = useRouter();
+  const refreshData = () => router.replace(router.asPath);
 
   const scrollToBottom = () => {
     if (checkerVal === false) {
@@ -444,7 +445,6 @@ export async function getServerSideProps(context) {
   });
   const data = await res.json();
 
-  
   return {
     props: {
       session,
