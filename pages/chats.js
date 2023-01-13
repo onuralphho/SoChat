@@ -27,7 +27,7 @@ const ChatsPage = ({ chatBoxes }) => {
   const [checkerVal, setCheckerVal] = useState(false);
   const router = useRouter();
   const refreshData = () => router.replace(router.asPath);
-  const [burgerOpen, setBurgerOpen] = useState(false)
+  const [burgerOpen, setBurgerOpen] = useState(false);
   const scrollToBottom = () => {
     if (checkerVal === false) {
       messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
@@ -106,43 +106,54 @@ const ChatsPage = ({ chatBoxes }) => {
               <span className="capitalize text-xl font-semibold text-neutral-700">
                 {session.data.user.name}
               </span>
-             
+
               <HiUserAdd
                 onClick={() => {
                   setFriendSearch(!friendSearch);
                 }}
                 className="w-7 h-7 text-neutral-700 cursor-pointer "
               />
-              <div
-                onClick={() => {
-                  setSettingsDropdown(!settingsDropdown);
-                  setBurgerOpen(!burgerOpen)
-                }}
-                className="relative group cursor-pointer"
-              >
-                <button onClick={() => {
-                setBurgerOpen(!burgerOpen)
-              }} className=" hamburger-menu flex flex-col gap-1 ">
-                <div className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700  ${burgerOpen ?"burger-open-1 bg-red-600":""}`}></div>
-                <div className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700 ${burgerOpen ?"opacity-0":""}`}></div>
-                <div className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700 ${burgerOpen ?"burger-open-2 bg-red-600":""}`}></div>
-              </button>
-                <ul
-                  
-                  className={`select-none flex-col gap-1 place-items-center  border bg-green-400 text-white rounded-md right-0 top-6 z-50 ${
-                    settingsDropdown ? "absolute" : "hidden"
-                  }`}
+              <div onClick={() => {}} className="relative group cursor-pointer">
+                <div
+                  onClick={() => {
+                    setSettingsDropdown(!settingsDropdown);
+                    setBurgerOpen(!burgerOpen);
+                    setBurgerOpen(!burgerOpen);
+                  }}
+                  className=" hamburger-menu flex flex-col gap-1 "
                 >
-                  <li className="border-b px-4 py-1">Profile</li>
-                  <li
-                    onClick={() => {
-                      signOut();
-                    }}
-                    className="border-b px-3 py-1"
+                  <div
+                    className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700  ${
+                      burgerOpen ? "burger-open-1 bg-red-600" : ""
+                    }`}
+                  ></div>
+                  <div
+                    className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700 ${
+                      burgerOpen ? "opacity-0" : ""
+                    }`}
+                  ></div>
+                  <div
+                    className={` h-[3px] w-6 rounded-full transition-all bg-neutral-700 ${
+                      burgerOpen ? "burger-open-2 bg-red-600" : ""
+                    }`}
+                  ></div>
+
+                  <ul
+                    className={`select-none flex-col gap-1 place-items-center  border bg-green-400 text-white rounded-md right-0 top-6 z-50 ${
+                      settingsDropdown ? "absolute" : "hidden"
+                    }`}
                   >
-                    Logout
-                  </li>
-                </ul>
+                    <li className="border-b px-4 py-1">Profile</li>
+                    <li
+                      onClick={() => {
+                        signOut();
+                      }}
+                      className="px-3 py-1"
+                    >
+                      Logout
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div className="flex flex-col py-1 gap-3 ">
@@ -420,7 +431,11 @@ const ChatsPage = ({ chatBoxes }) => {
                     />
                     {messageInput.length !== 0 && (
                       <button className="bg-green-500 px-5 font-semibold disabled:cursor-not-allowed disabled:bg-green-800 ">
-                        <FaTelegramPlane className={`w-7 h-7 text-white plane ${messageSending?"sending":""}`}/>
+                        <FaTelegramPlane
+                          className={`w-7 h-7 text-white plane ${
+                            messageSending ? "sending" : ""
+                          }`}
+                        />
                       </button>
                     )}
                   </form>
