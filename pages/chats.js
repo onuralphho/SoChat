@@ -310,7 +310,7 @@ const ChatsPage = ({ chatBoxes }) => {
           >
             {chatDetail ? (
               <>
-                <div className="flex flex-col w-full ">
+                <div className="flex flex-col w-full  ">
                   <div className="flex items-center gap-5 px-5 h-20 shadow-lg py-2 bg-gradient-to-tr  from-indigo-500 to-green-400">
                     <MdArrowBackIos
                       onClick={() => {
@@ -342,7 +342,8 @@ const ChatsPage = ({ chatBoxes }) => {
                     session={session}
                   ></ChatLog> */}
 
-                  <div className="flex flex-col  max-md:h-[540px] h-[570px] overflow-y-scroll gap-2  pt-2 px-5  ">
+                  <div className="flex flex-col  pb-12 overflow-y-scroll gap-2  pt-2 px-5  ">
+                    <div className="h-[500px]"></div>
                     {chatDetail.messages.map((message) => (
                       <div
                         key={chatDetail.messages.indexOf(message)}
