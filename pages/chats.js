@@ -343,7 +343,9 @@ const ChatsPage = ({ chatBoxes }) => {
                   ></ChatLog> */}
 
                   <div className="flex flex-col  pb-12 overflow-y-scroll gap-2  pt-2 px-5  ">
-                    <div className="h-[500px]"></div>
+                    <div className={`min-h-[700px] mx-auto flex items-center`}>
+                      <span className="text-white text-xl"> Say Hi! <span className="hand-wave text-2xl">👋</span> to your friend</span>
+                    </div>
                     {chatDetail.messages.map((message) => (
                       <div
                         key={chatDetail.messages.indexOf(message)}
