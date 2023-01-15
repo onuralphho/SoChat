@@ -3,7 +3,7 @@ import connectMongo from "../../db/conn";
 
 const sendMessage = async (req, res) => {
   connectMongo().catch((error) => res.json({ error: "Connection Failed...!" }));
- 
+
   if (req.method === "POST") {
     chatBoxes.findByIdAndUpdate(
       { _id: req.body.id },

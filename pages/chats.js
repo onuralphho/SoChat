@@ -11,6 +11,8 @@ import React from "react";
 import { useRouter } from "next/router";
 import chatBoxes from "../models/chatBoxSchema";
 
+import Pusher from "pusher-js";
+
 const ChatsPage = ({ chatBoxes }) => {
   const session = useSession();
   const friendSearchInputRef = useRef();
@@ -35,11 +37,14 @@ const ChatsPage = ({ chatBoxes }) => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
+
   useEffect(() => {
+    setWindowInnerHeight(window.innerHeight);
     scrollToBottom();
   }, [chatDetail]);
 
   const sendHandler = async (id) => {
+    setMessageInput("");
     if (messageInput.length === 0) {
       return;
     }
@@ -77,13 +82,9 @@ const ChatsPage = ({ chatBoxes }) => {
     router.replace(router.asPath);
     setCheckerVal(true);
     setChatDetail(data2.newData);
-    setMessageInput("");
+
     setMessageSending(false);
   };
-
-  useEffect(() => {
-    setWindowInnerHeight(window.innerHeight);
-  }, [chatDetail]);
 
   return (
     <>
@@ -177,26 +178,26 @@ const ChatsPage = ({ chatBoxes }) => {
                       const NewData = data.user.filter(
                         (item) => item.email !== session.data.user.email
                       );
-                      const checkData = [];
+                      // const checkData = [];
 
-                      chatBoxes.map((chat) => {
-                        checkData.push(chat.owner.email);
-                        checkData.push(chat.talkingTo.email);
-                      });
+                      // chatBoxes.map((chat) => {
+                      //   checkData.push(chat.owner.email);
+                      //   checkData.push(chat.talkingTo.email);
+                      // });
 
-                      const FinalCheckData = checkData.filter(
-                        (item) => item !== session.data.user.email
-                      );
+                      // const FinalCheckData = checkData.filter(
+                      //   (item) => item !== session.data.user.email
+                      // );
 
-                      const FinalData = [];
+                      // const FinalData = [];
 
-                      NewData.map(
-                        (item) =>
-                          !FinalCheckData.includes(item.email) &&
-                          FinalData.push(item)
-                      );
+                      // NewData.map(
+                      //   (item) =>
+                      //     !FinalCheckData.includes(item.email) &&
+                      //     FinalData.push(item)
+                      // );
 
-                      setFethedSearchData(FinalData);
+                      setFethedSearchData(NewData);
                     } else {
                       setFethedSearch(false);
                     }
@@ -344,7 +345,13 @@ const ChatsPage = ({ chatBoxes }) => {
 
                   <div className="flex flex-col  pb-12 overflow-y-scroll gap-2  pt-2 px-5  ">
                     <div className={`min-h-[700px] mx-auto flex items-center`}>
-                      <span className="text-white text-xl"> Say Hi! <span className="hand-wave text-2xl">👋</span> to your friend</span>
+                      <span className="text-white text-xl">
+                        {" "}
+                        Say Hi! <span className="hand-wave text-2xl">
+                          👋
+                        </span>{" "}
+                        to your friend
+                      </span>
                     </div>
                     {chatDetail.messages.map((message) => (
                       <div
