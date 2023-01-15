@@ -2,11 +2,11 @@ import { useSession } from "next-auth/react";
 import Pusher from "pusher-js";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-const test = () => {
+const Test = () => {
   const { data: session } = useSession();
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState([]);
-const [counter, setCounter] = useState(0);
+    const [counter, setCounter] = useState(0);
 
     console.log(messages)
 
@@ -81,4 +81,4 @@ const [counter, setCounter] = useState(0);
   );
 };
 
-export default test;
+export default Test;
